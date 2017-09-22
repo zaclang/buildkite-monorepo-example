@@ -1,0 +1,24 @@
+{
+  "name": "bar-service",
+  "env": {},
+  "steps": [
+    {
+      "label": ":node: bar-service",
+      "command": "echo 'bar-service-pipeline'"
+    },
+    {
+      "type": "waiter"
+    },
+    {
+      "label": ":hammer: install",
+      "command": "echo 'doing stuff'"
+    },
+    {
+      "type": "waiter"
+    },
+    {
+      "label": ":wrench: test",
+      "command": "echo 'doing stuff'"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "steps": [
+    {
+      "label": ":pipeline:",
+      "command": "node .buildkite/pipeline.js | buildkite-agent pipeline upload"
+    }
+  ]
+}
