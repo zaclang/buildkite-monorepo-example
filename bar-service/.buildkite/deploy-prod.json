@@ -1,0 +1,9 @@
+{
+  "env": {},
+  "steps": [
+    {
+      "label": ":ec2::aws: deploying bar-service (prod)",
+      "command": "echo 'deploying bar-service to prod'"
+    }
+  ]
+}

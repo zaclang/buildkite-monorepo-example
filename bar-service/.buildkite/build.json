@@ -1,0 +1,9 @@
+{
+  "env": {},
+  "steps": [
+    {
+      "label": ":node: build bar-service",
+      "command": "echo 'building bar-service'"
+    }
+  ]
+}

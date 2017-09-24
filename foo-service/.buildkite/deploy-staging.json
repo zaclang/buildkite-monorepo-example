@@ -1,0 +1,9 @@
+{
+  "env": {},
+  "steps": [
+    {
+      "label": ":serverless: deploying foo-service (staging)",
+      "command": "echo 'deploying foo-service to staging'"
+    }
+  ]
+}

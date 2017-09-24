@@ -1,0 +1,9 @@
+{
+  "env": {},
+  "steps": [
+    {
+      "label": ":javascript::docker: build/test foo-service",
+      "command": "echo 'building foo-service'"
+    }
+  ]
+}
