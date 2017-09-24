@@ -1,8 +1,9 @@
-const fs = require('fs');
 const { promisify } = require('util');
-const readFileAsync = promisify(fs.readFile);
-const writeFileAsync = promisify(fs.writeFile);
 const execAsync = promisify(require('child_process').exec);
+const { 
+  parseJsonFile, 
+  writeJsonFile,
+} = require('./utils');
 
 const [
   BASE_COMMIT = false,
@@ -23,7 +24,7 @@ async function detectAndOutputChanges(baseCommit, outputFilename, registeredServ
 
     await cleanUpTemporaryFiles(outputFilename);
 
-    const registeredServices = await parseFile(registeredServicesFilename);
+    const registeredServices = await parseJsonFile(registeredServicesFilename);
 
     const changedServices = await findDirectoriesChangedSinceCommit(baseCommit);
 
@@ -35,7 +36,7 @@ async function detectAndOutputChanges(baseCommit, outputFilename, registeredServ
 
     console.log({ pipelinesToTrigger });
 
-    await writeFileAsync(outputFilename, JSON.stringify(pipelinesToTrigger, null, 2));
+    await writeJsonFile(outputFilename, pipelinesToTrigger);
 
   } catch (error) {
     console.error(error);
@@ -46,17 +47,13 @@ async function detectAndOutputChanges(baseCommit, outputFilename, registeredServ
 async function findDirectoriesChangedSinceCommit(commit_sha) {
   console.log(`Detecting changes since commit: ${commit_sha}`);
   const { stdout, stderr } = await execAsync(`git diff --name-only ${commit_sha} | awk 'BEGIN {FS="/";} {print $1;}' | sort -u  `);
-  if (stderr) {
+  console.log({ stdout, stderr });
+  if (stderr) {    
     throw new Error(stderr);
   }  
   const changes = stdout.split('\n').filter(Boolean);
   console.log({ changes });
   return changes;
-}
-
-async function parseFile(filePath) {  
-  const fileContents = await readFileAsync(filePath, { encoding: 'utf8' });
-  return JSON.parse(fileContents);
 }
 
 function cleanUpTemporaryFiles(filePath) {

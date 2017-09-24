@@ -1,8 +1,9 @@
-const fs = require('fs');
 const { promisify } = require('util');
-const readFileAsync = promisify(fs.readFile);
-const writeFileAsync = promisify(fs.writeFile);
 const execAsync = promisify(require('child_process').exec);
+const { 
+  parseJsonFile, 
+  writeJsonFile, 
+} = require('./utils');
 
 const [
   CHANGES_LIST_FILENAME = 'changes.json',
@@ -17,7 +18,7 @@ generateDynamicPipeline(BUILDKITE_COMMIT, CHANGES_LIST_FILENAME, TEMPLATE_OUTPUT
 
 async function generateDynamicPipeline(commit, changesFilename, outputFilename) {
   try {
-    const changedServices = await parseFile(changesFilename);
+    const changedServices = await parseJsonFile(changesFilename);        
 
     if (!changedServices.length) {
       console.log('no changed services!');
@@ -26,7 +27,7 @@ async function generateDynamicPipeline(commit, changesFilename, outputFilename) 
 
     const generatedTemplate = await buildPipelineSteps(commit, changedServices);
 
-    await writeFileAsync(outputFilename, JSON.stringify(generatedTemplate, null, 2));
+    await writeJsonFile(outputFilename, generatedTemplate);
 
     await uploadPipelineToBuildkite(outputFilename);
 
@@ -90,15 +91,6 @@ const { build, deployStaging, deployProd } = await readStepsForChangedServices(s
     DEFAULT_TEMPLATE,
     { steps }, 
   );
-}
-
-async function parseFile(path) {
-  try {
-  const contents = await readFileAsync(path, { encoding: 'utf8' });   
-  return JSON.parse(contents);
-  } catch (error) {
-    return '';
-  }
 }
 
 function uploadPipelineToBuildkite(filePath) {
