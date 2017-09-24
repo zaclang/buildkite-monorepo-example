@@ -1,0 +1,51 @@
+{
+  "env": {},
+  "steps": [
+    {
+      "label": ":javascript::docker: build/test foo-service",
+      "command": "echo 'building foo-service'"
+    },
+    {
+      "label": ":node: build bar-service",
+      "command": "echo 'building bar-service'"
+    },
+    {
+      "type": "waiter"
+    },
+    {
+      "label": ":serverless: deploying foo-service (staging)",
+      "command": "echo 'deploying foo-service to staging'"
+    },
+    {
+      "label": ":ec2::aws: deploying bar-service (staging)",
+      "command": "echo 'deploying bar-service to staging'"
+    },
+    {
+      "type": "waiter"
+    },
+    {
+      "type": "script",
+      "name": "e2e-staging :pray:",
+      "command": "echo 'e2e'"
+    },
+    {
+      "block": "Release :red_button: :dragon:"
+    },
+    {
+      "label": ":serverless: deploying foo-service (prod)",
+      "command": "echo 'deploying foo-service to prod'"
+    },
+    {
+      "label": ":ec2::aws: deploying bar-service (prod)",
+      "command": "echo 'deploying bar-service to prod'"
+    },
+    {
+      "type": "waiter"
+    },
+    {
+      "type": "script",
+      "name": "e2e-prod :pray:",
+      "command": "echo 'e2e'"
+    }
+  ]
+}
