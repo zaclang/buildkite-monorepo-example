@@ -1,9 +1,9 @@
 
 ## buildkite-monorepo-example
 
-* Single commit to deploy any number of services
+* Single commit to deploy any number of services from a single repo
 
-* Service pipeline steps are dynamically consumed on change
+* Services define their own build & deploy stages
 
 * Single click to release all changed services
 
