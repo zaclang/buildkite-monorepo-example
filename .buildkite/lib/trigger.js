@@ -39,46 +39,36 @@ async function generateDynamicPipeline(commit, changesFilename, outputFilename) 
 
 async function readStepsForChangedServices(services) {
   // todo: refactor this!
-  const build = await Promise.all(services.map(service => parseFile(`${service}/.buildkite/build.json`)));    
-  const deployStaging = await Promise.all(services.map(service => parseFile(`${service}/.buildkite/deploy-staging.json`)));
-  const deployProd = await Promise.all(services.map(service => parseFile(`${service}/.buildkite/deploy-prod.json`)));
-  return { build, deployStaging, deployProd };
+  const build = await Promise.all(services.map(service => parseJsonFile(`${service}/.buildkite/build.json`)));    
+  const deployStaging = await Promise.all(services.map(service => parseJsonFile(`${service}/.buildkite/deploy-staging.json`)));
+  const deployProd = await Promise.all(services.map(service => parseJsonFile(`${service}/.buildkite/deploy-prod.json`)));
+
+  return { 
+    build: build.filter(Boolean), 
+    deployStaging: deployStaging.filter(Boolean), 
+    deployProd: deployProd.filter(Boolean)
+   };
 }
 
 async function buildPipelineSteps(commit, services = []) {
   const DEFAULT_TEMPLATE = {env: {}, steps: []};
 
-const { build, deployStaging, deployProd } = await readStepsForChangedServices(services);
+  const { build, deployStaging, deployProd } = await readStepsForChangedServices(services);
 
   if (!services.length) { return DEFAULT_TEMPLATE };
 
-  const steps = build.reduce((acc, item) => acc.concat(item.steps), [])
-  
-    // wait for builds to complete
-
+  const steps = build.reduce((acc, { steps = [] }) => acc.concat(steps), [])
     .concat([{ type: "waiter" }])
-    .concat(deployStaging.reduce((acc, item) => acc.concat(item.steps), []))
-
-    // wait for staging deployments to complete
-
-    .concat([    
-      { type: "waiter" },
+    .concat(deployStaging.reduce((acc, { steps = [] }) => acc.concat(steps), []))
+    .concat([{ type: "waiter" },
       {
         "type": "script",
         "name": "e2e-staging :pray:",
         "command": "echo 'e2e'",
       },
-      {
-        block: "Release :red_button: :dragon:",
-      }]
-      .concat(deployProd.reduce((acc, item) => acc.concat(item.steps), []))
-
-      // wait for prod deployments to complete
-
-      .concat([
-        {
-          type: "waiter",
-        },
+      { block: "Release :red_button: :dragon:" }]
+    .concat(deployProd.reduce((acc, { steps = [] }) => acc.concat(steps), []))
+    .concat([{ type: "waiter" },
         {
           "type": "script",
           "name": "e2e-prod :pray:",

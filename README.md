@@ -13,9 +13,9 @@
 ### flow:
 
 ```
-foo-service \                                                  / foo-service-staging \                  / foo-service-prod \
-             -> commit -> detect changes -> trigger services ->                        -> e2e-staging ->                    -> e2e-prod
-bar-service /                                                  \ bar-service-staging /                  \ bar-service-prod /
+foo-service \                                        / build foo-service -------- \  /- deploy foo-service (staging) -\                  / deploy foo-service (prod) \
+             -> detect changes -> trigger services ->                              --                                  -> e2e-staging -->                             -> e2e-prod
+bar-service /                                        \ build & test bar-service - /  \- deploy bar-service (staging) -/                  \ deploy bar-service (prod) /
 ```
 
 ### TODO:
