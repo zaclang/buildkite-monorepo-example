@@ -22,6 +22,6 @@ bar-service /                                        \ build & test bar-service 
 
 * Unit test important stuff like dynamic template output
 
-* Rather than comparing changes with the previous commit, store deployed the commit sha in agent meta-data and diff between releases
+* Rather than comparing changes with the previous commit, store the deployed commit sha and diff between releases
 
 * Once Buildkite supports it (allegedly soon...), initialise new pipelines automatically based on the `.buildkite/project.json`
