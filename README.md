@@ -3,11 +3,11 @@
 
 * Single commit to deploy any number of services from a single repo
 
-* Services define their own build & deploy stages
+* Services define their own build & deploy steps
 
 * Single click to release all changed services
 
-* e2e suite runs after all deployments complete
+* e2e suite runs after staging deployments complete, and again after prod deployment
 
 
 ### Release flow:
