@@ -57,27 +57,35 @@ async function buildPipelineSteps(commit, services = []) {
 
   if (!services.length) { return DEFAULT_TEMPLATE }
 
-  const combineStepsForStage = (stage) => stage.reduce((acc, { steps = [] }) => acc.concat(steps), []);
+  const combineStepsForPhase = (phase) => phase.reduce((acc, { steps = [] }) => acc.concat(steps), []);
 
-  const steps = combineStepsForStage(build)
-    .concat([{ type: "waiter" }])
-    .concat(combineStepsForStage(deployStaging))
-    .concat([{ type: "waiter" },
+  const steps = combineStepsForPhase(build)
+    .concat(
+      {
+        type: "waiter"
+      },
+      combineStepsForPhase(deployStaging),
+      {
+        type: "waiter"
+      },
       {
         "type": "script",
         "name": "e2e-staging :pray:",
         "command": "echo 'e2e'",
       },
-      { block: "Release :red_button: :dragon:" }]
-    .concat(combineStepsForStage(deployProd))
-    .concat([{ type: "waiter" },
-        {
-          "type": "script",
-          "name": "e2e-prod :pray:",
-          "command": "echo 'e2e'",
-        }
-      ])    
-    );  
+      {
+        block: "Release :red_button: :dragon:"
+      },
+      combineStepsForPhase(deployProd),
+      {
+        type: "waiter"
+      },
+      {
+        "type": "script",
+        "name": "e2e-prod :pray:",
+        "command": "echo 'e2e'",
+      }
+    );
 
   return Object.assign(
     DEFAULT_TEMPLATE,
