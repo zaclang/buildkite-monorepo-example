@@ -43,4 +43,3 @@ node .buildkite/lib/trigger.js changes.sample.json
 
 * Rather than comparing changes with the previous commit, store the deployed commit sha and diff between releases
 
-* Once Buildkite supports it (allegedly soon...), initialise new pipelines automatically based on the `.buildkite/project.json`
