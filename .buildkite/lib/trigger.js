@@ -37,18 +37,25 @@ async function generateDynamicPipeline(commit, changesFilename, outputFilename) 
   }
 }
 
+
 async function readStepsForChangedServices(services) {
-  // todo: refactor this!
-  const build = await Promise.all(services.map(service => parseJsonFile(`${service}/.buildkite/build.json`)));    
-  const deployStaging = await Promise.all(services.map(service => parseJsonFile(`${service}/.buildkite/deploy-staging.json`)));
-  const deployProd = await Promise.all(services.map(service => parseJsonFile(`${service}/.buildkite/deploy-prod.json`)));
+  const COMMON_PHASES = ['build', 'deploy-staging', 'deploy-prod'];
+
+  const readServiceStepsForPhase = async (phase) => await Promise.all(
+    services.map(service => parseJsonFile(`${service}/.buildkite/${phase}.json`))
+  );
+
+  const [build, deployStaging, deployProd] = await Promise.all(
+    COMMON_PHASES.map(readServiceStepsForPhase).filter(Boolean)
+  );
 
   return { 
-    build: build.filter(Boolean), 
-    deployStaging: deployStaging.filter(Boolean), 
-    deployProd: deployProd.filter(Boolean)
+    build,
+    deployStaging,
+    deployProd,
    };
 }
+
 
 async function buildPipelineSteps(commit, services = []) {
   const DEFAULT_TEMPLATE = {env: {}, steps: []};
@@ -92,6 +99,7 @@ async function buildPipelineSteps(commit, services = []) {
     { steps }, 
   );
 }
+
 
 function uploadPipelineToBuildkite(filePath) {
   return execAsync(`cat ${filePath} | buildkite-agent pipeline upload`);
