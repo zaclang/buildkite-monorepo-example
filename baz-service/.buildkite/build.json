@@ -1,0 +1,9 @@
+{
+  "env": {},
+  "steps": [
+    {
+      "label": ":javascript::docker: build baz-service",
+      "command": "echo 'building baz-service'"
+    }
+  ]
+}
