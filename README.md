@@ -18,6 +18,12 @@ foo-service \                                        / build foo-service -------
 bar-service /                                        \ build & test bar-service - /  \- deploy bar-service (staging) -/                  \ deploy bar-service (prod) /
 ```
 
+
+### Adding a new service:
+
+* [Example:](https://github.com/zaclang/buildkite-monorepo-example/commit/9403c0dc2525c95f466cb17b577d4dcc9497a780)
+
+
 ### TODO:
 
 * Unit test important stuff like dynamic template output
