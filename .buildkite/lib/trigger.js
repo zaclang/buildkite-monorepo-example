@@ -39,6 +39,7 @@ async function generateDynamicPipeline(commit, changesFilename, outputFilename) 
 
 
 async function readStepsForChangedServices(services) {
+  // TODO: break this method down further
   const COMMON_PHASES = ['build', 'deploy-staging', 'deploy-prod'];
 
   const readServiceStepsForPhase = async (phase) => await Promise.all(
