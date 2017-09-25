@@ -6,7 +6,7 @@ const generatePipeline = () => {
         "type": "script",
         "name": `:eyes: :microscope: :github: Detecting changes`,
         "command": `node .buildkite/lib/detect-changes.js $(git rev-parse --verify HEAD~1)`,
-        "artifact_paths": "_changes"
+        "artifact_paths": "changes.json"
       },
       {
         type: "waiter",
