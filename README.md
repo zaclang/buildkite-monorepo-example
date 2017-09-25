@@ -20,6 +20,18 @@ bar-service  /                                         \ build & test bar-servic
 baz-service/                                             \ build baz-service -----/
 ```
 
+### Setup:
+
+* Create a new pipeline for your repo, with the following command step:
+
+```
+node .buildkite/pipeline.js | buildkite-agent pipeline upload
+```
+
+* Register your subdirectories/services in `.buildkite/registered.json`
+
+* Trigger a build that includes a change to your subdirectories
+
 
 ### Adding a new service:
 
