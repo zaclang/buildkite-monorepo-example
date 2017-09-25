@@ -49,10 +49,12 @@ async function readStepsForChangedServices(services) {
     COMMON_PHASES.map(readServiceStepsForPhase).filter(Boolean)
   );
 
+  const flattenSteps = (phase) => phase.reduce((acc, { steps = [] }) => acc.concat(steps), []);
+
   return { 
-    build,
-    deployStaging,
-    deployProd,
+    build: flattenSteps(build),
+    deployStaging: flattenSteps(deployStaging),
+    deployProd: flattenSteps(deployProd),
    };
 }
 
@@ -64,14 +66,12 @@ async function buildPipelineSteps(commit, services = []) {
 
   if (!services.length) { return DEFAULT_TEMPLATE }
 
-  const combineStepsForPhase = (phase) => phase.reduce((acc, { steps = [] }) => acc.concat(steps), []);
-
-  const steps = combineStepsForPhase(build)
+  const steps = build
     .concat(
       {
         type: "waiter"
       },
-      combineStepsForPhase(deployStaging),
+      deployStaging,
       {
         type: "waiter"
       },
@@ -83,7 +83,7 @@ async function buildPipelineSteps(commit, services = []) {
       {
         block: "Release :red_button: :dragon:"
       },
-      combineStepsForPhase(deployProd),
+        deployProd,
       {
         type: "waiter"
       },
