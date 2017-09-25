@@ -55,11 +55,13 @@ async function buildPipelineSteps(commit, services = []) {
 
   const { build, deployStaging, deployProd } = await readStepsForChangedServices(services);
 
-  if (!services.length) { return DEFAULT_TEMPLATE };
+  if (!services.length) { return DEFAULT_TEMPLATE }
 
-  const steps = build.reduce((acc, { steps = [] }) => acc.concat(steps), [])
+  const combineStepsForStage = (stage) => stage.reduce((acc, { steps = [] }) => acc.concat(steps), []);
+
+  const steps = combineStepsForStage(build)
     .concat([{ type: "waiter" }])
-    .concat(deployStaging.reduce((acc, { steps = [] }) => acc.concat(steps), []))
+    .concat(combineStepsForStage(deployStaging))
     .concat([{ type: "waiter" },
       {
         "type": "script",
@@ -67,7 +69,7 @@ async function buildPipelineSteps(commit, services = []) {
         "command": "echo 'e2e'",
       },
       { block: "Release :red_button: :dragon:" }]
-    .concat(deployProd.reduce((acc, { steps = [] }) => acc.concat(steps), []))
+    .concat(combineStepsForStage(deployProd))
     .concat([{ type: "waiter" },
         {
           "type": "script",
